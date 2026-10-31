@@ -25,9 +25,9 @@ export default function Footer() {
           <div>
             <h4 className="text-gold font-semibold mb-4">روابط سريعة</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="/" className="hover:text-gold transition-colors">الرئيسية</a></li>
-              <li><a href="/guide" className="hover:text-gold transition-colors">دليل التاجر</a></li>
-              <li><a href="/support" className="hover:text-gold transition-colors">الدعم</a></li>
+              <li><a href="#/" className="hover:text-gold transition-colors">الرئيسية</a></li>
+              <li><a href="#/guide" className="hover:text-gold transition-colors">دليل التاجر</a></li>
+              <li><a href="#/support" className="hover:text-gold transition-colors">الدعم</a></li>
             </ul>
           </div>
 
