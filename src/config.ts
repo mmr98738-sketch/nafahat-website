@@ -21,7 +21,7 @@ export const siteConfig = {
   
   // روابط التواصل والدعم — عدّلها حسب الحاجة
   supportEmail: "",
-  whatsapp: "", // أضف رقم الواتساب هنا
+  whatsapp: "966503160001", // قناة الدعم المسجلة في شركاء سلة
   twitter: "", // أضف رابط تويتر هنا
   github: "https://github.com/mmr98738-sketch/nafahat-website", // أضف رابط المستودع هنا
 
