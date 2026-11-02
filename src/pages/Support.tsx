@@ -5,10 +5,20 @@ import { siteConfig } from '../config';
 export default function Support() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+  const whatsappNumber = siteConfig.whatsapp.replace(/\D/g, '');
+  const message = ['طلب دعم — ثيم نفحات', `الاسم: ${formData.name.trim()}`,
+    ...(formData.email.trim() ? [`البريد الإلكتروني: ${formData.email.trim()}`] : []),
+    '', formData.message.trim()].join('\n');
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // تنبيه: لا يوجد خدمة إرسال فعلية — النموذج يوضح الطريقة فقط
+    if (!formData.name.trim() || !formData.message.trim()) {
+      setError('يرجى كتابة الاسم والرسالة قبل المتابعة.');
+      return;
+    }
+    setError('');
     setSubmitted(true);
   };
 
@@ -90,7 +100,7 @@ export default function Support() {
         <div className="rounded-2xl bg-ivory dark:bg-navy-dark border border-gold/10 p-8">
           <h2 className="text-2xl font-bold text-navy dark:text-ivory mb-2">نموذج التواصل</h2>
           <p className="text-navy/60 dark:text-ivory/60 text-sm mb-6">
-            النموذج غير مفعل حاليًا ولا يرسل رسائل.
+            اكتب طلبك وجهّز رسالة للتواصل مع دعم نفحات عبر واتساب.
           </p>
 
           {/* تنبيه مهم */}
@@ -98,20 +108,25 @@ export default function Support() {
             <AlertCircle size={20} className="text-gold flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm text-navy/70 dark:text-ivory/70">
-                <strong>ملاحظة:</strong> هذا النموذج توضيحي حاليًا. لإرسال الرسائل فعلًا، 
-                يجب ربط النموذج بخدمة إرسال مثل Formspree أو EmailJS أو API مخصص.
-                حتى يتم الربط، يمكنك التواصل عبر البريد الإلكتروني أو واتساب مباشرة.
+                يمكنك مراجعة رسالتك قبل فتح واتساب. لا يُرسل هذا النموذج الرسالة تلقائيًا؛
+                ستحتاج إلى الضغط على «إرسال» داخل واتساب.
               </p>
             </div>
           </div>
 
           {submitted ? (
             <div className="p-6 rounded-xl bg-gold/5 border border-gold/20 text-center">
-              <p className="text-navy/70 dark:text-ivory/70">
-                لم تُرسل الرسالة؛ النموذج توضيحي وغير متصل بخدمة إرسال.
-                <br />
-                للتواصل الفعلي، استخدم البريد الإلكتروني أو واتساب أعلاه.
+              <p role="status" className="text-navy/70 dark:text-ivory/70">
+                رسالتك جاهزة للمراجعة ولم تُرسل بعد.
               </p>
+              <p className="whitespace-pre-wrap text-start my-5 text-navy dark:text-ivory">{message}</p>
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gold text-navy-dark rounded-xl font-semibold">
+                <MessageCircle size={18} /> فتح واتساب لإرسال الرسالة
+              </a>
+              <button type="button" onClick={() => setSubmitted(false)} className="block mx-auto mt-4 text-gold underline">
+                تعديل الرسالة
+              </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -126,13 +141,14 @@ export default function Support() {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-gold/20 bg-ivory dark:bg-navy-dark text-navy dark:text-ivory placeholder:text-navy/30 dark:placeholder:text-ivory/30 focus:border-gold focus:ring-1 focus:ring-gold/30 outline-none transition-all"
                   placeholder="اسمك الكامل"
+                  maxLength={100}
                   required
                 />
               </div>
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-navy dark:text-ivory mb-2">
-                  البريد الإلكتروني
+                  البريد الإلكتروني (اختياري)
                 </label>
                 <input
                   type="email"
@@ -142,7 +158,7 @@ export default function Support() {
                   className="w-full px-4 py-3 rounded-xl border border-gold/20 bg-ivory dark:bg-navy-dark text-navy dark:text-ivory placeholder:text-navy/30 dark:placeholder:text-ivory/30 focus:border-gold focus:ring-1 focus:ring-gold/30 outline-none transition-all"
                   placeholder="example@email.com"
                   dir="ltr"
-                  required
+                  maxLength={254}
                 />
               </div>
 
@@ -155,6 +171,7 @@ export default function Support() {
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   rows={5}
+                  maxLength={2000}
                   className="w-full px-4 py-3 rounded-xl border border-gold/20 bg-ivory dark:bg-navy-dark text-navy dark:text-ivory placeholder:text-navy/30 dark:placeholder:text-ivory/30 focus:border-gold focus:ring-1 focus:ring-gold/30 outline-none transition-all resize-none"
                   placeholder="اكتب رسالتك هنا..."
                   required
@@ -162,12 +179,14 @@ export default function Support() {
               </div>
 
               <button
-                type="submit" disabled
+                type="submit" disabled={!whatsappNumber}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 bg-gold text-navy-dark font-semibold rounded-xl hover:bg-gold-light transition-all shadow-lg shadow-gold/20"
               >
                 <Send size={18} />
-                الإرسال غير متاح حاليًا
+                مراجعة الرسالة
               </button>
+              {error && <p role="alert" className="text-red-600 dark:text-red-400">{error}</p>}
+              {!whatsappNumber && <p role="status">التواصل عبر واتساب غير متاح حاليًا.</p>}
             </form>
           )}
         </div>
@@ -175,3 +194,4 @@ export default function Support() {
     </div>
   );
 }
+
